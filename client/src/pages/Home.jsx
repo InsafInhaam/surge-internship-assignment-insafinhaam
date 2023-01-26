@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import { useEffect } from "react";
 import moment from "moment";
 import { UserContext } from "../App";
+import { toast } from "react-hot-toast";
 
 const Home = () => {
   const { state, dispatch } = useContext(UserContext);
@@ -36,7 +37,8 @@ const Home = () => {
       .then((res) => res.json())
       .then((result) => {
         // console.log(result);
-        const newData = data.map((item) => {
+        const newData = data
+          .map((item) => {
             if (item._id == result._id) {
               return result;
             } else {
@@ -56,7 +58,7 @@ const Home = () => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("jwt"),
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
       body: JSON.stringify({
         postId: id,
@@ -65,7 +67,40 @@ const Home = () => {
       .then((res) => res.json())
       .then((result) => {
         console.log(data);
-        const newData = data.map((item) => {
+        const newData = data
+          .map((item) => {
+            if (item._id == result._id) {
+              return result;
+            } else {
+              return item;
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+
+        setData(newData);
+      });
+  };
+
+  const makeComment = (text, postId) => {
+    fetch(process.env.REACT_APP_API_URL + "/api/comment", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({
+        postId,
+        text,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        toast.success(data.message);
+        const newData = data
+          .map((item) => {
             if (item._id == result._id) {
               return result;
             } else {
@@ -92,7 +127,7 @@ const Home = () => {
               <div className="col-8">
                 <CreatePost />
                 {/* START OF POSTS */}
-                {data.map((item) => {
+                {data?.map((item) => {
                   return (
                     <div
                       className="d-flex flex-column mt-4 mb-4"
@@ -140,6 +175,49 @@ const Home = () => {
                                 .fromNow()}
                             </small>
                           </div>
+                          {item.comments.length > 0 ? (
+                            <div className="p-3">
+                              <span className="text-muted">
+                                View all {item.comments.length} comments
+                              </span>
+
+                              <div>
+                                {item.comments.map((comment) => {
+                                  console.log(comment);
+                                  return (
+                                    <div key={comment._id}>
+                                      <strong className="d-block">
+                                        {comment.postedBy.username}
+                                      </strong>
+                                      <span>{comment.text}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                          <div className="position-relative comment-box">
+                            <form
+                              onSubmit={(e) => {
+                                e.preventDefault();
+                                makeComment(e.target[0].value, item._id);
+                              }}
+                            >
+                              <input
+                                type="text"
+                                className="w-100 border-0 p-3 input-post"
+                                placeholder="Add a comment..."
+                              />
+                              <button
+                                className="btn btn-primary position-absolute btn-ig"
+                                type="submit"
+                              >
+                                Post
+                              </button>
+                            </form>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -163,7 +241,9 @@ const Home = () => {
                   </div>
                   <div className="profile-info ml-3 d-flex flex-column align-items-center">
                     <span className="profile-info-name">{state?.name}</span>
-                    <span className="profile-info-username">{state?.username}</span>
+                    <span className="profile-info-username">
+                      {state?.username}
+                    </span>
                   </div>
                 </div>
               </div>

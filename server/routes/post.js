@@ -4,7 +4,9 @@ const Post = require("../models/Post");
 const requireLogin = require("../middleware/requireLogin");
 
 router.get("/allpost", requireLogin, async (req, res) => {
-  const posts = await Post.find().populate("postedBy", "_id name username");
+  const posts = await Post.find().populate("postedBy","_id username")
+  .populate("comments.postedBy","_id username")
+  .sort('-createdAt')
 
   try {
     res.status(201).json(posts);
@@ -53,12 +55,11 @@ router.put('/unlike', requireLogin, (req,res) => {
     $pull: {likes: req.user._id}
   },{
     new:true,
-  }).populate("comments.postedBy", "_id, username")
+  })
   .exec((err, result) =>{
     if(err){
       return res.status(422).json({error: err})
     }else{
-      res.status(201).json({message: "Commented Successfully!"})
       res.json(result);
     }
   })
@@ -75,13 +76,14 @@ router.put('/comment', requireLogin, (req,res) => {
     $push: {comments: comment}
   },{
     new:true,
-  }).exec((err, result) =>{
+  })
+  .populate("comments.postedBy","_id username")
+    .populate("postedBy","_id username")
+    .exec((err, result) =>{
     if(err){
       return res.status(422).json({error: err})
     }else{
-       res.status(201).json({message: "Commented Successfully!"})
-      res.json(result);
-      return
+      return res.status(201).json({ message: "The post created successfully", result });
     }
   })
 })

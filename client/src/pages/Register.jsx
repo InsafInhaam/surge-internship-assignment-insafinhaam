@@ -141,7 +141,7 @@ const Register = () => {
                     />
                   </div>
                   <div className="form-group mb-4">
-                    <label htmlFor="password">Password</label>
+                    <label htmlFor="image">Profile Image</label>
                     <input
                       type="file"
                       name="image"
