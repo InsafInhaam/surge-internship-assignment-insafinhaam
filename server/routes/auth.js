@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fetch = require('node-fetch');
 const { stringify } = require('querystring');
+const requireLogin = require("../middleware/requireLogin");
 
 router.post("/signin", async (req, res) => {
   const { username, email, password } = req.body;
@@ -128,6 +129,52 @@ router.post("/signup", async (req, res) => {
       .json({ message: "User created successfully", newUser });
   } catch (error) {
     return res.status(422).json({ error: "User created unsuccessfully" });
+  }
+});
+
+router.get("/alluser", requireLogin, async (req, res) => {
+  const users = await User.find()
+  .sort('-createdAt')
+
+  try {
+    res.status(201).json(users);
+  } catch (error) {
+    res.status(422).json({
+      error: error,
+    });
+  }
+});
+
+router.get("/getUserById/:id", requireLogin, async (req, res) => {
+  const user = await User.findById(req.params.id)
+
+  try {
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(422).json({
+      error: error,
+    });
+  }
+});
+
+
+router.put("/updateuser/:id", requireLogin, async (req, res) => {
+  const updateUser = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+      $set: req.body,
+    },
+    {
+      new: true,
+    }
+  );
+
+  try {
+    res.status(201).json({updateUser, message: "Updated successfully"});
+  } catch (error) {
+    res.status(422).json({
+      error: error,
+    });
   }
 });
 

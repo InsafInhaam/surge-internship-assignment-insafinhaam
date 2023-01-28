@@ -11,22 +11,31 @@ const Navbar = () => {
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container justify-content-center">
           <div className="d-flex flex-row justify-content-between align-items-center col-9">
-            <Link className="navbar-brand" href="/">
-              <h1 className="">Surge</h1>
+            <Link className="navbar-brand" to="/">
+              <h1 className="logo-title">Surge</h1>
             </Link>
             <div className="d-flex flex-row">
               <ul className="list-inline m-0">
+                <li className="list-inline-item pr-3">
+                  <a href="/user" className="link-menu">
+                    Users
+                  </a>
+                </li>
+                <li className="list-inline-item pr-5">
+                  <a href={"/profile/" + state?._id} className="link-menu">
+                    Profile
+                  </a>
+                </li>
                 <li className="list-inline-item">
                   <a
                     href=""
-                    className="link-menu"
+                    className="btn btn-danger"
                     onClick={() => {
                       localStorage.clear();
                       dispatch({ type: "CLEAR" });
                       history("/login");
                     }}
-                  >
-                    <p>Logout</p>
+                  >Logout
                   </a>
                 </li>
               </ul>

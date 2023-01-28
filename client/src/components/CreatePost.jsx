@@ -28,6 +28,9 @@ const CreatePost = () => {
             toast.error(data.error);
           } else {
             toast.success(data.message);
+            setTitle("");
+            setBody("");
+            setImage("");
           }
         })
         .catch((err) => {

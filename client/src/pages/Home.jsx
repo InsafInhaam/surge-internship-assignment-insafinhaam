@@ -2,9 +2,8 @@ import React, { useContext, useState } from "react";
 import CreatePost from "../components/CreatePost";
 import Navbar from "../components/Navbar";
 import { useEffect } from "react";
-import moment from "moment";
 import { UserContext } from "../App";
-import { toast } from "react-hot-toast";
+import Post from "../components/Post";
 
 const Home = () => {
   const { state, dispatch } = useContext(UserContext);
@@ -23,98 +22,6 @@ const Home = () => {
       });
   }, [data]);
 
-  const likePost = (id) => {
-    fetch(process.env.REACT_APP_API_URL + "/api/like", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({
-        postId: id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        // console.log(result);
-        const newData = data
-          .map((item) => {
-            if (item._id == result._id) {
-              return result;
-            } else {
-              return item;
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-
-        setData(newData);
-      });
-  };
-
-  const unlikePost = (id) => {
-    fetch(process.env.REACT_APP_API_URL + "/api/unlike", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({
-        postId: id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        console.log(data);
-        const newData = data
-          .map((item) => {
-            if (item._id == result._id) {
-              return result;
-            } else {
-              return item;
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-
-        setData(newData);
-      });
-  };
-
-  const makeComment = (text, postId) => {
-    fetch(process.env.REACT_APP_API_URL + "/api/comment", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({
-        postId,
-        text,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        console.log(result);
-        toast.success(data.message);
-        const newData = data
-          .map((item) => {
-            if (item._id == result._id) {
-              return result;
-            } else {
-              return item;
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-
-        setData(newData);
-      });
-  };
-
   return (
     <div>
       <div>
@@ -129,98 +36,7 @@ const Home = () => {
                 {/* START OF POSTS */}
                 {data?.map((item) => {
                   return (
-                    <div
-                      className="d-flex flex-column mt-4 mb-4"
-                      key={item._id}
-                    >
-                      <div className="card">
-                        <div className="card-header p-3">
-                          <div className="d-flex flex-column align-items-start">
-                            <h5>{item.title}</h5>
-                            <p>{item.body}</p>
-                          </div>
-                        </div>
-                        <div className="card-body p-0">
-                          <div className="embed-responsive embed-responsive-1by1">
-                            <img
-                              className="embed-responsive-item"
-                              src={item.photo}
-                            />
-                          </div>
-                          <div className="p-3 d-flex align-items-center justify-content-between">
-                            <div className="d-flex align-items-center justify-content-center">
-                              <div className="btn p-0">
-                                {item.likes.includes(state._id) ? (
-                                  <i
-                                    className="bi bi-heart-fill text-danger"
-                                    onClick={() => unlikePost(item._id)}
-                                  ></i>
-                                ) : (
-                                  <i
-                                    className="bi bi-heart"
-                                    onClick={() => likePost(item._id)}
-                                  ></i>
-                                )}
-                              </div>
-                              <strong className="d-block pl-1">
-                                {item.likes?.length}
-                              </strong>
-                            </div>
-                            <strong className="d-block">
-                              {item.postedBy?.username}
-                            </strong>
-                            <small className="text-muted">
-                              {moment(item?.createdAt)
-                                .startOf("second")
-                                .fromNow()}
-                            </small>
-                          </div>
-                          {item.comments.length > 0 ? (
-                            <div className="p-3">
-                              <span className="text-muted">
-                                View all {item.comments.length} comments
-                              </span>
-
-                              <div>
-                                {item.comments.map((comment) => {
-                                  console.log(comment);
-                                  return (
-                                    <div key={comment._id}>
-                                      <strong className="d-block">
-                                        {comment.postedBy.username}
-                                      </strong>
-                                      <span>{comment.text}</span>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          ) : (
-                            ""
-                          )}
-                          <div className="position-relative comment-box">
-                            <form
-                              onSubmit={(e) => {
-                                e.preventDefault();
-                                makeComment(e.target[0].value, item._id);
-                              }}
-                            >
-                              <input
-                                type="text"
-                                className="w-100 border-0 p-3 input-post"
-                                placeholder="Add a comment..."
-                              />
-                              <button
-                                className="btn btn-primary position-absolute btn-ig"
-                                type="submit"
-                              >
-                                Post
-                              </button>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <Post item={item} state={state} data={data} setData={setData}  key={item._id} />
                   );
                 })}
                 {/* END OF POSTS */}

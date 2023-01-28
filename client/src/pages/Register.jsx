@@ -51,7 +51,6 @@ const Register = () => {
     }
   }, [profilePic]);
 
-  console.log(token)
 
   const handleSubmit = () => {
     const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
