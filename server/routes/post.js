@@ -146,23 +146,20 @@ router.delete("/deletecomment/:id", requireLogin, async (req, res) => {
         (comment) => comment._id.toString() === req.params.id.toString()
       );
 
-      // const commentToDelete = post.comments.find(
-      //   (comment) => comment.postedBy._id.toString() === req.user._id.toString(),
-      // );
-        
       if (commentToDelete) {
-        if(commentToDelete.postedBy._id.toString() === req.user._id.toString()){
-
-        post.comments.pull(commentToDelete);
-        post.save((err, result) => {
-          if (err) {
-            console.log(err);
-          } else {
-            res.status(201).json({ result, message: "Comment deleted!" });
-          }
-        });
+        if (
+          commentToDelete.postedBy._id.toString() === req.user._id.toString()
+        ) {
+          post.comments.pull(commentToDelete);
+          post.save((err, result) => {
+            if (err) {
+              console.log(err);
+            } else {
+              res.status(201).json({ result, message: "Comment deleted!" });
+            }
+          });
+        }
       }
-    }
     });
 });
 
