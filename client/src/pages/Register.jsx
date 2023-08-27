@@ -1,4 +1,4 @@
-import React, { useEffect,useState, useRef } from "react";
+import React, { useEffect,useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -14,9 +14,7 @@ const Register = () => {
 
   const [loading, setLoading] = useState(false);
 
-
   const [token, setToken] = useState("")
-  const reCaptcha = useRef();
 
   useEffect(() => {
     if (profilePic) {
@@ -51,7 +49,6 @@ const Register = () => {
     }
   }, [profilePic]);
 
-
   const handleSubmit = () => {
     const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
@@ -65,19 +62,19 @@ const Register = () => {
       return toast.error("Password must have special characters");
     }
     if(!token){
-      return toast.error("You must verify the captcha");
+      return toast.error ("You must verify the captcha");
     }
     const data = new FormData();
-    data.append("file", image);
+    data.append("file", image); 
     data.append("upload_preset", "surge-intern-test");
     data.append("cloud_name", "dp6yyczpu");
     fetch(process.env.REACT_APP_CLOUDINARY_URL, {
       method: "POST",
       body: data,
-    })
+    })  
       .then((res) => res.json())
       .then((data) => {
-        setProfilePic(data.secure_url);
+        setProfilePic(data.secure_url); 
       })
       .catch((error) => console.log(error));
   };
@@ -151,7 +148,6 @@ const Register = () => {
                   </div>
                   <div className="form-group mb-4">
                     <ReCAPTCHA
-                      ref={reCaptcha}
                       sitekey={process.env.REACT_APP_RECAPTCHA}
                       onChange={token => setToken(token)}
                       onExpired={e => setToken("")}

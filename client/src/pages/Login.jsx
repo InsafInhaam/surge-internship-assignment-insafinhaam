@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { UserContext } from "../App";
@@ -12,8 +12,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [token, setToken] = useState("")
-  const reCaptcha = useRef();
+  const [token, setToken] = useState("");
 
   const emailRegex =
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -30,7 +29,7 @@ const Login = () => {
     if (!token) {
       toast.error("Yoou must verify the captcha");
       return;
-  }
+    }
 
     fetch(process.env.REACT_APP_API_URL + "/api/signin", {
       method: "POST",
@@ -41,7 +40,7 @@ const Login = () => {
         username,
         email,
         password,
-        token
+        token,
       }),
     })
       .then((res) => res.json())
@@ -102,13 +101,12 @@ const Login = () => {
                   </div>
                   <div className="form-group mb-4">
                     <ReCAPTCHA
-                      ref={reCaptcha}
                       sitekey={process.env.REACT_APP_RECAPTCHA}
-                      onChange={token => setToken(token)}
-                      onExpired={e => setToken("")}
+                      onChange={(token) => setToken(token)}
+                      onExpired={(e) => setToken("")}
                     />
                   </div>
-                  
+
                   <input
                     name="login"
                     id="login"
@@ -121,7 +119,7 @@ const Login = () => {
                 <p className="login-wrapper-footer-text">
                   Don't have an account?
                   <Link to="/register" className="text-reset">
-                     Register here
+                    Register here
                   </Link>
                 </p>
               </div>

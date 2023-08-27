@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const { state, dispatch } = useContext(UserContext);
   const history = useNavigate();
+  
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">

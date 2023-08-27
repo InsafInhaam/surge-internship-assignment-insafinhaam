@@ -115,7 +115,6 @@ router.post("/signup", async (req, res) => {
   if (body.success !== undefined && !body.success)
     return res.status(422).json({  error: "Failed captcha verification" });
 
-
   // password hashing
   const salt = bcrypt.genSaltSync(10);
   const hashedPassword = bcrypt.hashSync(req.body.password, salt);

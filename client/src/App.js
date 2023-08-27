@@ -3,7 +3,7 @@ import Login from "./pages/Login";
 import {
   BrowserRouter as Router,
   Route,
-  Routes,
+  Routes, 
   useNavigate,
 } from "react-router-dom";
 import Home from "./pages/Home";
@@ -40,7 +40,7 @@ const Routing = () => {
       <Route exact path="/register" element={<Register />} />
       <Route exact path="/user" element={<User />} />
       <Route exact path="/profile/:id" element={<Profile />} />
-      <Route exact path="/EditProfile" element={<EditProfile />} />
+      <Route exact path="/EditProfile" element={<EditProfile />} /> 
     </Routes>
   );
 };

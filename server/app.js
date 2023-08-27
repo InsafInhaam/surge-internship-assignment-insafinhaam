@@ -14,8 +14,6 @@ app.use(cors());
 app.use("/api", require('./routes/auth'));
 app.use("/api", require('./routes/post'));
 
-
-
 app.listen(PORT, () => {
   console.log("listening on port", PORT);
 });
